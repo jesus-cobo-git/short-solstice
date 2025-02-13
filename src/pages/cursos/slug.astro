@@ -1,0 +1,93 @@
+---
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+// Obtener el parámetro dinámico del URL
+const { slug } = useParams();
+
+const [curso, setCurso] = useState(null);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const fetchCurso = async () => {
+    try {
+      const response = await fetch(
+        `https://proyectofinal-f186e-default-rtdb.europe-west1.firebasedatabase.app/cursos.json`
+      );
+
+
+      if (!slug) {
+  console.error("El slug es undefined");
+  return;
+}
+
+
+      // Buscar el curso por el slug (id)
+const data: Curso[] = await response.json();
+const cursoEncontrado: Curso | undefined = data.find((c) => c.id === parseInt(slug));
+
+if (!cursoEncontrado) {
+  console.error("Curso no encontrado");
+  return;
+}
+
+
+      setCurso(cursoEncontrado);
+    } catch (error) {
+      console.error("Error al obtener el curso:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCurso();
+}, [slug]);
+
+if (loading) return <p class="text-center text-gray-600">Cargando curso...</p>;
+if (!curso) return <p class="text-center text-red-600">Curso no encontrado</p>;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{curso.titulo}</title>
+  </head>
+  <body class="bg-gray-100">
+    
+    <!-- 🚀 HERO DEL CURSO -->
+    <section 
+      class="relative w-full h-[400px] bg-cover bg-center flex items-center justify-center text-white"
+      style="background-image: url('/ruta-de-tu-imagen.jpg');"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="relative text-center max-w-3xl px-6">
+        <h1 class="text-4xl sm:text-5xl font-bold">{curso.titulo}</h1>
+        <p class="text-lg sm:text-xl mt-4 text-gray-200">{curso.descripcion}</p>
+      </div>
+    </section>
+
+    <!-- 📚 DETALLES DEL CURSO -->
+    <div class="max-w-5xl mx-auto my-12 p-6 bg-white shadow-lg rounded-lg">
+      <h2 class="text-2xl font-bold text-gray-800">Detalles del Curso</h2>
+      <p class="text-gray-600 mt-2">{curso.descripcion}</p>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold">Contenido del Curso:</h3>
+        <ul class="list-disc list-inside text-gray-700">
+          {curso.contenido.map((tema, index) => (
+            <li key={index}>{tema}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="mt-6 flex justify-between items-center">
+        <span class="text-lg font-bold text-blue-600">${curso.precio}</span>
+        <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+          Inscribirse Ahora
+        </a>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,23 @@
+---
+import { db } from '../../lib/firebase';
+import { ref, get } from 'firebase/database';
+import CourseDetail from '../../components/CourseDetail';
+const { id } = Astro.params;
+
+const courseRef = ref(db, `courses/${id}`);
+const snapshot = await get(courseRef);
+const course = snapshot.val();
+
+if (!course) {
+  return Response.redirect('/404');
+}
+---
+
+<html lang="es">
+  <head>
+    <title>{course.title}</title>
+  </head>
+  <body>
+    <CourseDetail client:load course={course} />
+  </body>
+</html>

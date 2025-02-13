@@ -1,0 +1,60 @@
+---
+import '../styles/styles.css';
+import CursoGrid from '../components/CursoGrid.jsx';
+import SearchBar from '../components/SearchBar';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Cursos</title>
+  </head>
+  <body class="bg-gray-100">
+
+    <header id="header" class="fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-50 transition duration-300">
+      <!-- 📌 Logo (usa la imagen de fondo `wall.jpg`) -->
+      <div class="flex items-center">
+        <img src="/logojesus.jpg" alt="Logo" class="w-12 h-12 rounded-full border border-white">
+        <h1 class="ml-3 text-2xl font-bold text-white">Jesus Store</h1>
+      </div>
+
+      <!-- 🔍 SearchBar -->
+      <div class="w-full max-w-md">
+        <SearchBar client:load />
+      </div>
+
+      <!-- 🏠 Botón Home -->
+      <a href="/" class="bg-transparent text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition">
+        🏠 Inicio 
+      </a>
+    </header>
+
+    <!-- 🚀 HERO SECTION -->
+    <section 
+      class="relative w-full h-[500px] bg-cover bg-center flex items-center justify-center text-white"
+      style="background-image: url('/wall.jpg');"
+    >
+      <!-- Fondo Oscuro con Opacidad -->
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+      <!-- Contenido del Hero -->
+      <div class="relative text-center max-w-3xl px-6">
+        <h1 class="text-4xl sm:text-5xl font-bold leading-tight">
+          Domina nuevas habilidades con nuestros cursos online
+        </h1>
+        <p class="text-lg sm:text-xl mt-4 text-gray-200">
+          Aprende a tu ritmo con cursos de alta calidad en programación, diseño, IA y más.
+        </p>
+        <a href="#cursos" class="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
+          Explorar Cursos 🚀
+        </a>
+      </div>
+    </section>
+
+    <!-- 📚 GRID DE CURSOS -->
+    <h1 class="text-3xl font-semibold text-center my-8">Nuestros Cursos</h1>
+    <CursoGrid client:load />
+
+  </body>
+</html>

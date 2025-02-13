@@ -1,0 +1,128 @@
+---
+// @ts-nocheck
+
+import SearchBar from "../../components/SearchBar.jsx";
+
+import PurchaseConfirmationModal from "../../components/PurchaseDialog.jsx";
+
+export async function getStaticPaths() {
+  const response = await fetch(
+    "https://proyectofinal-f186e-default-rtdb.europe-west1.firebasedatabase.app/cursos.json"
+  );
+  const cursos = await response.json();
+
+  return cursos.map((curso) => ({
+    params: { slug: curso.id.toString() },
+  }));
+}
+
+// Obtener el parámetro dinámico de la URL
+const { slug } = Astro.params;
+
+// Obtener los datos del curso
+const response = await fetch(
+  "https://proyectofinal-f186e-default-rtdb.europe-west1.firebasedatabase.app/cursos.json"
+);
+const cursos = await response.json();
+
+// Buscar el curso actual por ID
+const curso = cursos.find((c) => c.id.toString() === slug);
+
+if (!curso) {
+  throw new Error("Curso no encontrado");
+}
+
+// Filtrar cursos relacionados (diferentes al curso actual)
+const cursosRelacionados = cursos
+  .filter((c) => c.id.toString() !== slug)
+  .sort(() => Math.random() - 0.5) // Mezcla los cursos aleatoriamente
+  .slice(0, 3); // Selecciona solo 3 cursos
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${curso.titulo}</title>
+    <style>
+      /* 🎨 Efecto de difuminado al hacer scroll */
+      .scrolled {
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+
+	  <PurchaseConfirmationModal open={false} price={curso.precio} />
+
+    <!-- ✅ HEADER TRANSPARENTE -->
+    <header id="header" class="fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-50 transition duration-300">
+      <div class="flex items-center">
+        <img src="/logojesus.jpg" alt="Logo" class="w-12 h-12 rounded-full border border-white">
+        <h1 class="ml-3 text-2xl font-bold text-white">Jesus Store</h1>
+      </div>
+
+      <div class="w-full max-w-md">
+        <SearchBar client:load />
+      </div>
+
+      <a href="/" class="bg-transparent text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition">
+        🏠 Inicio
+      </a>
+    </header>
+
+    <!-- 🚀 HERO DEL CURSO -->
+    <section 
+      class="relative w-full h-[500px] bg-cover bg-center flex items-center justify-center text-white"
+      style="background-image: url('/wall.jpg');"
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div class="relative text-center max-w-3xl px-6">
+        <h1 class="text-4xl sm:text-5xl font-bold">{curso.titulo}</h1>
+        <p class="text-lg sm:text-xl mt-4 text-gray-200">{curso.descripcion}</p>
+      </div>
+    </section>
+
+    <!-- 📚 DETALLES DEL CURSO -->
+    <div class="max-w-5xl mx-auto my-12 p-6 bg-white shadow-lg rounded-lg">
+      <h2 class="text-2xl font-bold text-gray-800">Detalles del Curso</h2>
+      <p class="text-gray-600 mt-2">{curso.descripcion}</p>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold">Contenido del Curso:</h3>
+        <p class="text-gray-600 mt-2">{curso.contenido}</p>
+
+      </div>
+
+      <div class="mt-6 flex justify-between items-center">
+        <span class="text-lg font-bold text-blue-600">{curso.precio}€</span>
+        <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+          Inscribirse Ahora
+        </a>
+      </div>
+    </div>
+
+    <!-- 🎯 CURSOS RELACIONADOS -->
+<!-- 🎯 CURSOS RELACIONADOS -->
+<!-- 🎯 CURSOS RELACIONADOS -->
+<!-- 🎯 CURSOS RELACIONADOS -->
+<section class="max-w-6xl mx-auto my-12">
+  <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Cursos Relacionados</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {cursosRelacionados.map((relCurso) => (
+      <a href={`/cursos/${relCurso.id}`} class="bg-white shadow-md rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105">
+        <h3 class="text-xl font-semibold text-blue-600">{relCurso.titulo}</h3>
+        <p class="text-gray-600 text-sm mt-2">{relCurso.descripcion.substring(0, 100)}...</p>
+        <p class="text-sm text-gray-500 mt-1">Nivel: {relCurso.nivel}</p>
+        <p class="text-lg font-bold text-green-600 mt-2">${relCurso.precio}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+
+
+
+  </body>
+</html>
